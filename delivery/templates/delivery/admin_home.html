@@ -1,15 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Page</title>
-</head>
-<body>
-    <h3>Welcome to Admin HOME!</h3>
+    <title>Admin Dashboard | LuxeBite</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, rgba(15, 16, 21, 0.85) 0%, rgba(30, 32, 42, 0.85) 100%),
+                url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: white;
+            padding: 2rem;
+        }
 
-    <a href="open_add_restaurant">ADD NEW RESTAURANT</a>
-    <br><br>
-    <a href="open_show_restaurant">SHOW RESTAURANTS</a>
+        .glass-card {
+            background: rgba(25, 27, 35, 0.65);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 30px;
+            padding: 4rem 3rem;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #ff4757);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: #dcdde1;
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+
+        .admin-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .admin-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 20px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .admin-btn:hover {
+            background: rgba(255, 71, 87, 0.2);
+            border-color: #ff4757;
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(255, 71, 87, 0.3);
+            color: #fff;
+        }
+
+        .icon {
+            font-size: 2rem;
+        }
+
+        .logout-btn {
+            display: inline-block;
+            margin-top: 3rem;
+            color: #ff4757;
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px solid transparent;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            border-bottom: 1px solid #ff4757;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="glass-card">
+        <h2>Executive Dashboard</h2>
+        <p class="subtitle">Welcome back, Manager. What would you like to do today?</p>
+
+        <div class="admin-options">
+            <a href="{% url 'open_add_restaurant' %}" class="admin-btn">
+                <span class="icon">🏢</span> Add New Restaurant
+            </a>
+
+            <a href="{% url 'open_show_restaurant' %}" class="admin-btn">
+                <span class="icon">📋</span> Manage Restaurants
+            </a>
+
+            <a href="{% url 'pending_restaurants' %}" class="admin-btn">
+                <span class="icon">⏳</span> Pending Approvals
+            </a>
+
+            <a href="{% url 'show_users' %}" class="admin-btn">
+                <span class="icon">👥</span> Manage Users
+            </a>
+        </div>
+
+        <a href="{% url 'index' %}" class="logout-btn">Log Out</a>
+    </div>
 </body>
+
 </html>

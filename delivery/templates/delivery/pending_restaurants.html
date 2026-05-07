@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Approvals</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            min-height: 100vh;
+        }
+        .header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem 5%;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        h1 { 
+            margin: 0;
+            font-weight: 800;
+            background: linear-gradient(45deg, #fd9644, #fa8231);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .grid {
+            padding: 4rem 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            border-radius: 50px 10px 50px 10px; /* Non-square Shape */
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(250, 130, 49, 0.1);
+        }
+        .card:hover {
+            transform: translateY(-10px) rotate(-1deg);
+            box-shadow: 0 30px 60px rgba(250, 130, 49, 0.15);
+        }
+        .img { width: 100%; height: 220px; object-fit: cover; }
+        .info { padding: 2rem; }
+        .title { margin: 0 0 0.5rem 0; font-size: 1.8rem; font-weight: 800; }
+        .cuisine { 
+            color: #fa8231; 
+            margin: 0 0 1.5rem 0; 
+            font-weight: 600; 
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .actions {
+            display: flex;
+            gap: 1.2rem;
+        }
+        .btn {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: 800;
+            color: white;
+            transition: all 0.3s;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        .btn:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 12px 20px rgba(0,0,0,0.15);
+        }
+        .btn-accept { background: linear-gradient(45deg, #2ecc71, #27ae60); }
+        .btn-reject { background: linear-gradient(45deg, #e74c3c, #c0392b); }
+        .back-link {
+            text-decoration: none;
+            color: #2d3436;
+            font-weight: bold;
+            padding: 0.8rem 1.5rem;
+            background: #f1f2f6;
+            border-radius: 100px;
+            transition: 0.3s;
+        }
+        .back-link:hover { background: #dfe4ea; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Pending Approvals ⏳</h1>
+        <a href="javascript:history.back()" class="back-link">← Back to Dashboard</a>
+    </div>
+
+    <div class="grid">
+        {% if restaurantList %}
+            {% for r in restaurantList %}
+            <div class="card">
+                <img src="{{ r.picture }}" class="img" alt="{{ r.name }}">
+                <div class="info">
+                    <h2 class="title">{{ r.name }}</h2>
+                    <p class="cuisine">{{ r.cuisine }}</p>
+                    <div class="actions">
+                        <a href="{% url 'accept_restaurant' r.id %}" class="btn btn-accept">✅ Accept</a>
+                        <a href="{% url 'reject_restaurant' r.id %}" class="btn btn-reject">❌ Reject</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <h2 style="color: #999;">No pending requests.</h2>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -3,38 +3,417 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Page</title>
+    <title>Fine Dining | LuxeBite</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4757;
+            --accent: #2ecc71;
+            --bg-dark: #0f1015;
+            --card-bg: rgba(25, 27, 35, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-dark);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Luxury Background */
+        .luxury-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 30%, rgba(255, 71, 87, 0.05) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 70%, rgba(46, 204, 113, 0.05) 0%, transparent 40%),
+                        #0f1015;
+        }
+
+        /* Navbar */
+        .navbar {
+            padding: 1.2rem 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 16, 21, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(45deg, #ff4757, #ff9a9e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .cart-link {
+            position: relative;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.6rem 1.2rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            transition: 0.3s;
+        }
+
+        .cart-link:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--primary);
+        }
+
+        .profile-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff4757, #ff6b81);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-weight: 800;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+            transition: 0.3s;
+        }
+
+        .profile-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(255, 71, 87, 0.5);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 4rem 8% 2rem 8%;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            color: #888;
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Category Chips */
+        .categories {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+            overflow-x: auto;
+            padding: 1rem;
+        }
+
+        .cat-chip {
+            padding: 1rem 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            min-width: 110px;
+        }
+
+        .cat-chip:hover {
+            border-color: var(--primary);
+            background: rgba(255, 71, 87, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .cat-icon { font-size: 1.8rem; }
+        .cat-label { font-weight: 600; font-size: 0.9rem; }
+
+        /* Search Section */
+        .search-section {
+            max-width: 800px;
+            margin: 0 auto 5rem auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1.5rem 2rem 1.5rem 4rem;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: white;
+            font-size: 1.2rem;
+            outline: none;
+            transition: 0.3s;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .search-input:focus {
+            background: rgba(255,255,255,0.08);
+            border-color: var(--primary);
+            box-shadow: 0 20px 50px rgba(255, 71, 87, 0.2);
+        }
+
+        .search-btn {
+            position: absolute;
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.4rem;
+            color: var(--primary);
+        }
+
+        /* Restaurant Grid */
+        .container {
+            padding: 0 8% 5rem 8%;
+        }
+
+        .grid-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .grid-header h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+        }
+
+        .restaurant-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 3rem;
+        }
+
+        /* Restaurant Card - Professional */
+        .res-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            color: white;
+            display: block;
+        }
+
+        .res-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+
+        .res-img-wrap {
+            height: 220px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .res-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.6s;
+        }
+
+        .res-card:hover .res-img { transform: scale(1.1); }
+
+        .res-badge {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            background: rgba(15, 16, 21, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        .res-info {
+            padding: 1.8rem;
+        }
+
+        .res-name {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin: 0 0 0.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .res-rating {
+            background: #2ecc71;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .res-cuisine {
+            color: #888;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .res-stats {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+            color: #aaa;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .stat-item { display: flex; align-items: center; gap: 6px; }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .res-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+    </style>
 </head>
 <body>
-    <h3>Welcome {{username}}!</h3>
 
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Restaurant name</th>
-                <th>Picture</th>
-                <th>Cuisine</th>
-                <th>Rating</th>
-                <th>Operations</th>
-            </tr>
-        </thead>
-        <tbody>
-            {%  for r in restaurantList %}
-                <tr>
-                    <td>{{ r.name }}</td>
-                    <td>
-                        <img src="{{ r.picture }}">
-                    </td>
-                    <td>{{ r.cuisine }}</td>
-                    <td>{{ r.rating }}</td>
-                    <td>
-                        <a href="{% url 'view_menu' r.id username %}">
-                            View Menu
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="luxury-bg"></div>
+
+    <nav class="navbar">
+        <div class="logo">LUXEBITE</div>
+        <div class="nav-actions">
+            <a href="{% url 'show_cart' username %}" class="cart-link">
+                <span>🛒</span> My Cart
+            </a>
+            <a href="{% url 'profile' username %}" class="profile-btn" title="My Profile">
+                {{ username|slice:":1"|upper }}
+            </a>
+            <a href="{% url 'index' %}" style="color: #ff4757; text-decoration: none; font-weight: 800; font-size: 0.9rem; letter-spacing: 1px;">EXIT</a>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>Experience <span style="color: var(--primary)">Excellence</span> <br> Delivered Home.</h1>
+        <p>Premium flavors from the city's finest kitchens, curated just for you.</p>
+
+        <div class="search-section">
+            <form action="{% url 'customer_home' username %}" method="get" id="searchForm">
+                <span class="search-btn" onclick="document.getElementById('searchForm').submit()" style="cursor: pointer;">🔍</span>
+                <input type="text" name="search" class="search-input" placeholder="Search for luxury dining or favorite dishes..." value="{{ query }}">
+            </form>
+        </div>
+
+        <div class="categories">
+            <a href="{% url 'customer_home' username %}?category=Biryani" class="cat-chip" style="text-decoration: none; color: inherit;">
+                <span class="cat-icon">🥘</span>
+                <span class="cat-label">Biryani</span>
+            </a>
+            <a href="{% url 'customer_home' username %}?category=Pizza" class="cat-chip" style="text-decoration: none; color: inherit;">
+                <span class="cat-icon">🍕</span>
+                <span class="cat-label">Pizza</span>
+            </a>
+            <a href="{% url 'customer_home' username %}?category=Burgers" class="cat-chip" style="text-decoration: none; color: inherit;">
+                <span class="cat-icon">🍔</span>
+                <span class="cat-label">Burgers</span>
+            </a>
+            <a href="{% url 'customer_home' username %}?category=Desserts" class="cat-chip" style="text-decoration: none; color: inherit;">
+                <span class="cat-icon">🍰</span>
+                <span class="cat-label">Desserts</span>
+            </a>
+            <a href="{% url 'customer_home' username %}?category=Ice Cream" class="cat-chip" style="text-decoration: none; color: inherit;">
+                <span class="cat-icon">🍦</span>
+                <span class="cat-label">Ice Cream</span>
+            </a>
+            <a href="{% url 'customer_home' username %}?category=Drinks" class="cat-chip" style="text-decoration: none; color: inherit;">
+                <span class="cat-icon">🍹</span>
+                <span class="cat-label">Drinks</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="grid-header">
+            <h2>
+                {% if query %}Results for "{{ query }}"
+                {% elif category %}Delicious {{ category }} Options
+                {% else %}Recommended for You{% endif %}
+            </h2>
+            <div style="color: #888; font-weight: 600;">{{ restaurantList|length }} Establishments Found</div>
+        </div>
+
+        <div class="restaurant-grid">
+            {% if restaurantList %}
+                {% for r in restaurantList %}
+                    <a href="{% url 'view_menu' r.id username %}" class="res-card">
+                        <div class="res-img-wrap">
+                            <img src="{{ r.picture }}" alt="{{ r.name }}" class="res-img" onerror="this.src='https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=600&q=80'">
+                            <div class="res-badge">PREMIUM CHOICE</div>
+                        </div>
+                        <div class="res-info">
+                            <div class="res-name">
+                                {{ r.name }}
+                                <span class="res-rating">★ {{ r.rating }}</span>
+                            </div>
+                            <div class="res-cuisine">{{ r.cuisine }}</div>
+                            <div class="res-stats">
+                                <div class="stat-item">🕒 25-35 MINS</div>
+                                <div class="stat-item">💰 ₹500 FOR TWO</div>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            {% else %}
+                <div style="grid-column: 1/-1; text-align: center; padding: 5rem 2rem; background: rgba(255,255,255,0.03); border-radius: 30px; border: 1px dashed rgba(255,255,255,0.1);">
+                    <span style="font-size: 5rem;">🧑‍🍳</span>
+                    <h3 style="font-size: 2rem; margin-top: 1rem;">Coming Soon!</h3>
+                    <p style="color: #888;">We're currently gathering the best chefs to serve you these items. <br> <b>We'll get back to you soon!</b></p>
+                    <a href="{% url 'customer_home' username %}" style="display: inline-block; margin-top: 2rem; color: #ff4757; text-decoration: none; font-weight: 800; border: 1px solid #ff4757; padding: 0.8rem 2rem; border-radius: 50px;">Browse All Restaurants</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
 </body>
 </html>

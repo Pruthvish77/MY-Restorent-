@@ -1,14 +1,456 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Welcome page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxeBite | Welcome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4757;
+            --primary-hover: #ff6b81;
+            --bg-dark: #0f1015;
+            --card-bg: rgba(25, 27, 35, 0.75);
+            --text-light: #ffffff;
+            --text-muted: #dcdde1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            /* Using the requested background image with a dark overlay to keep text readable */
+            background: linear-gradient(135deg, rgba(15, 16, 21, 0.85) 0%, rgba(30, 32, 42, 0.85) 100%), 
+                        url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed; /* Prevents background from moving upwards */
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Abstract Background Orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+        }
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 71, 87, 0.25);
+            top: -100px;
+            left: -100px;
+            animation: float 8s infinite alternate ease-in-out;
+        }
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: rgba(55, 66, 250, 0.2);
+            bottom: -150px;
+            right: -100px;
+            animation: float 10s infinite alternate-reverse ease-in-out;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(30px, 50px); }
+        }
+
+        /* Side Sticker Columns */
+        .sticker-column {
+            position: absolute;
+            top: 0;
+            height: 100vh;
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            padding: 2rem 0.5rem;
+            z-index: 5;
+            overflow: visible;
+            pointer-events: none;
+        }
+        
+        .sticker-column.left { left: 1%; }
+        .sticker-column.right { right: 1%; }
+
+        .sticker-item {
+            width: 100%;
+            height: auto;
+            animation: float-vertical 5s infinite ease-in-out;
+            pointer-events: all;
+        }
+
+        .sticker-item:nth-child(even) {
+            animation-duration: 7s;
+            animation-delay: -1.5s;
+        }
+
+        .sticker-item:nth-child(3n) {
+            animation-duration: 9s;
+            animation-delay: -3s;
+        }
+
+        .sticker-item img {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8));
+            mix-blend-mode: lighten; /* Works perfectly for my generated black-bg stickers */
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .sticker-item:hover img {
+            transform: scale(1.1) rotate(5deg);
+            z-index: 100;
+            filter: drop-shadow(0 20px 30px rgba(255, 71, 87, 0.5));
+        }
+
+        @keyframes float-vertical {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+        }
+
+        /* Responsive - hide stickers on small screens */
+        @media (max-width: 1000px) {
+            .sticker-column { display: none; }
+        }
+
+        /* Glassmorphism Card */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50%; /* Perfect Round/Oval Shape */
+            padding: 4rem;
+            width: 500px;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7);
+            z-index: 10;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .glass-card:hover {
+            transform: scale(1.02);
+            border-color: var(--primary);
+        }
+
+        .step {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(50px);
+        }
+
+        .step.active {
+            opacity: 1;
+            pointer-events: all;
+            position: relative;
+            transform: translateX(0);
+        }
+
+        .step.fade-out {
+            transform: translateX(-50px);
+            opacity: 0;
+            position: absolute;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #fff, #ff4757);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+            font-weight: 300;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn.primary {
+            background: var(--primary);
+            border: none;
+            flex-direction: row;
+            justify-content: center;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            margin-top: 1rem;
+            box-shadow: 0 10px 20px rgba(255, 71, 87, 0.4);
+        }
+
+        .btn.primary:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 15px 25px rgba(255, 71, 87, 0.5);
+            transform: translateY(-3px);
+        }
+
+        .btn.outline {
+            background: transparent;
+            border: 1px solid var(--text-muted);
+            color: white;
+            flex-direction: row;
+            justify-content: center;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+        }
+
+        .btn.outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: white;
+        }
+
+        .emoji {
+            font-size: 2rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* Animation Overlay CSS */
+        #entry-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0,0,0,0.9);
+            z-index: 9999;
+            display: none;
+            overflow: hidden;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #restaurant-door {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transform: scale(1);
+            transition: transform 0.5s ease-in-out, opacity 0.4s ease-in-out, filter 0.5s ease-in-out;
+            filter: brightness(0.6) sepia(0.2);
+        }
+
+        /* Animation classes */
+        .show-overlay {
+            display: flex !important;
+        }
+
+        .show-overlay #restaurant-door {
+            opacity: 1;
+        }
+
+        /* Login (Direct Entry): Zoom straight in */
+        .anim-direct #restaurant-door {
+            transform: scale(1.4);
+            filter: brightness(1.2) sepia(0);
+        }
+
+        /* Signup (Steps): Move down (like going up steps) then zoom */
+        #restaurant-door.anim-steps {
+            animation: walkUpSteps 0.5s forwards ease-in-out;
+        }
+
+        @keyframes walkUpSteps {
+            0% { transform: scale(1) translateY(0); filter: brightness(0.6); }
+            100% { transform: scale(1.4) translateY(0); filter: brightness(1.2); } /* Enter */
+        }
+
+        #entry-text {
+            position: relative;
+            z-index: 2;
+            color: white;
+            font-size: 3.5rem;
+            font-weight: 800;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.8);
+            opacity: 0;
+            transition: opacity 0.5s ease 0.2s;
+        }
+
+        .show-overlay #entry-text {
+            opacity: 1;
+        }
+    </style>
 </head>
 <body>
-    <h3>Welcome to Meal Buddy!</h3>
 
-    <a href="open_signup">SIGN UP</a>
-    <br>
-    <a href="open_signin">SIGN IN</a>
+    <!-- Background Image is set in CSS -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
 
+    <!-- Side Sticker Columns (Local Pure Cutouts) -->
+    <div class="sticker-column left">
+        <div class="sticker-item"><img src="{% static 'delivery/sticker_man.png' %}" alt="Sticker"></div>
+        <div class="sticker-item"><img src="{% static 'delivery/sticker_woman.png' %}" alt="Sticker"></div>
+        <div class="sticker-item"><img src="{% static 'delivery/sticker_man.png' %}" style="transform: scaleX(-1);" alt="Sticker"></div>
+    </div>
+
+    <div class="sticker-column right">
+        <div class="sticker-item"><img src="{% static 'delivery/sticker_woman.png' %}" alt="Sticker"></div>
+        <div class="sticker-item"><img src="{% static 'delivery/sticker_man.png' %}" alt="Sticker"></div>
+        <div class="sticker-item"><img src="{% static 'delivery/sticker_woman.png' %}" style="transform: scaleX(-1);" alt="Sticker"></div>
+    </div>
+
+    <div class="glass-card">
+        
+        <!-- Step 1: Gender Selection -->
+        <div id="step-1" class="step active">
+            <h2>Welcome!</h2>
+            <p>To give you the best experience, who are we welcoming today?</p>
+            
+            <div class="btn-group">
+                <button class="btn" onclick="selectGender('female')">
+                    <span class="emoji">👩</span>
+                    Female
+                </button>
+                <button class="btn" onclick="selectGender('male')">
+                    <span class="emoji">👨</span>
+                    Male
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 2: Personalized Greeting & Links -->
+        <div id="step-2" class="step">
+            <h2 id="greeting-title">Hey!</h2>
+            <p id="greeting-desc">I am here for you. Please get inside.</p>
+            
+            <div class="action-buttons">
+                <a href="{% url 'open_signin' %}" class="btn primary" onclick="enterRestaurant(event, '{% url 'open_signin' %}', 'direct')">Yours</a>
+                <a href="{% url 'open_signup' %}" class="btn outline" onclick="enterRestaurant(event, '{% url 'open_signup' %}', 'steps')">For You</a>
+                <a href="{% url 'restaurant_apply' %}" class="btn" style="background: transparent; color: white; border: 1px dashed rgba(255,255,255,0.5); margin-top: 1rem; flex-direction: row; gap: 10px; border-radius: 50px;">Partner With Us 🤝</a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Entry Animation Overlay -->
+    <div id="entry-overlay">
+        <div id="restaurant-door"></div>
+        <div id="entry-text">Entering The Food Club...</div>
+    </div>
+
+    <script>
+        function selectGender(gender) {
+            const step1 = document.getElementById('step-1');
+            const step2 = document.getElementById('step-2');
+            const title = document.getElementById('greeting-title');
+            
+            if (gender === 'female') {
+                title.innerHTML = 'Hey <span style="color: #ff9ff3;">beautiful!</span>';
+            } else if (gender === 'male') {
+                title.innerHTML = 'Hey <span style="color: #54a0ff;">handsome!</span>';
+            }
+
+            // Animate transition
+            step1.classList.remove('active');
+            step1.classList.add('fade-out');
+            
+            setTimeout(() => {
+                step1.style.display = 'none';
+                step2.classList.add('active');
+            }, 500);
+        }
+
+        function enterRestaurant(event, url, mode) {
+            event.preventDefault(); // Stop immediate navigation
+            
+            const overlay = document.getElementById('entry-overlay');
+            const door = document.getElementById('restaurant-door');
+            
+            if (mode === 'direct') {
+                door.style.backgroundImage = "url('https://dynamic-media-cdn.tripadvisor.com/media/photo-o/21/71/29/cc/caption.jpg?w=900&h=500&s=1')";
+                overlay.classList.add('anim-direct');
+            } else if (mode === 'steps') {
+                door.style.backgroundImage = "url('https://restaurantindia.s3.ap-south-1.amazonaws.com/s3fs-public/2025-03/BeFunky-collage.1%20%2847%29.jpg')";
+                door.classList.add('anim-steps');
+            }
+
+            overlay.classList.add('show-overlay');
+            
+            // Trigger reflow
+            void overlay.offsetWidth;
+
+            // Wait 0.5 second then navigate
+            setTimeout(() => {
+                window.location.href = url;
+            }, 500);
+        }
+    </script>
 </body>
 </html>

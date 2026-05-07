@@ -23,9 +23,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'your-secure-secret-key-here-change-this'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['yourusername.pythonanywhere.com']
+ALLOWED_HOSTS = ['*']
+
+# CSRF trusted origins for browser preview
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:61253',
+    'http://localhost:61253',
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+]
 
 
 # Application definition

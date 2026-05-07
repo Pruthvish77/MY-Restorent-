@@ -2,22 +2,329 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
-    <title>Order Summary</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Your Orders | Meal Buddy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            background: #0f1015;
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(25, 27, 35, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            background: linear-gradient(to right, #fff, #ff4757);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .container {
+            padding: 3rem 5%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .order-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 30px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 1.5rem;
+        }
+
+        .restaurant-info h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: #ff4757;
+        }
+
+        .order-meta {
+            text-align: right;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* Tracking Progress Bar */
+        .tracking-bar {
+            display: flex;
+            justify-content: space-between;
+            margin: 4rem 0;
+            position: relative;
+        }
+
+        .tracking-bar::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            z-index: 1;
+            border-radius: 10px;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 15px;
+            left: 0;
+            height: 4px;
+            background: #2ecc71;
+            z-index: 2;
+            transition: width 1s ease-in-out;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.5);
+        }
+
+        .step {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            width: 80px;
+        }
+
+        .step-circle {
+            width: 34px;
+            height: 34px;
+            background: #1e202a;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+
+        .step.active .step-circle {
+            background: #2ecc71;
+            border-color: #2ecc71;
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.4);
+        }
+
+        .step-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #888;
+            text-align: center;
+        }
+
+        .step.active .step-label {
+            color: white;
+        }
+
+        /* Delivery Info Section */
+        .delivery-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            background: rgba(255,255,255,0.03);
+            padding: 2rem;
+            border-radius: 20px;
+        }
+
+        .detail-item h4 {
+            margin: 0 0 0.5rem 0;
+            color: #ff4757;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .detail-item p {
+            margin: 0;
+            color: #ddd;
+            line-height: 1.5;
+        }
+
+        .partner-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .partner-avatar {
+            width: 45px;
+            height: 45px;
+            background: #ff4757;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 5rem 2rem;
+        }
+
+        .empty-state h2 {
+            color: #555;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            background: #ff4757;
+            color: white;
+            text-decoration: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 800;
+            transition: 0.3s;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(255, 71, 87, 0.3);
+        }
+
+        /* Status Colors */
+        .status-badge {
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .status-placed { background: rgba(52, 152, 219, 0.2); color: #3498db; }
+        .status-preparing { background: rgba(241, 196, 15, 0.2); color: #f1c40f; }
+        .status-out { background: rgba(155, 89, 182, 0.2); color: #9b59b2; }
+        .status-delivered { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+
+    </style>
 </head>
 <body>
-    <h1>Thank you for your order, {{ username }}!</h1>
 
+    <header class="header">
+        <h1>📦 My Orders</h1>
+        <a href="{% url 'customer_home' username %}" style="color: white; text-decoration: none; font-weight: 600;">← Back to Menu</a>
+    </header>
 
-    <h2>Delivery Address</h2>
-    <p>{{ customer.address }}</p>
+    <div class="container">
+        {% if orders %}
+            {% for order in orders %}
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="restaurant-info">
+                        <h2>{{ order.restaurant.name }}</h2>
+                        <span class="status-badge 
+                            {% if order.status == 'Placed' %}status-placed
+                            {% elif order.status == 'Preparing' %}status-preparing
+                            {% elif order.status == 'Out for Delivery' %}status-out
+                            {% elif order.status == 'Delivered' %}status-delivered{% endif %}">
+                            ● {{ order.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="order-meta">
+                        Order #MB-{{ order.id }}<br>
+                        {{ order.created_at|date:"F d, Y | H:i" }}<br>
+                        <b style="color: white; font-size: 1.2rem;">₹{{ order.total_amount }}</b>
+                    </div>
+                </div>
 
-    <p>Your order will be delivered to this location shortly. Thank you for choosing Meal Mate!</p>
+                <!-- Progress Bar Logic -->
+                <div class="tracking-bar">
+                    {% with status=order.status %}
+                    <div class="progress-line" style="width: 
+                        {% if status == 'Placed' %}0%
+                        {% elif status == 'Preparing' %}33%
+                        {% elif status == 'Out for Delivery' %}66%
+                        {% elif status == 'Delivered' %}100%{% endif %};">
+                    </div>
+                    
+                    <div class="step active">
+                        <div class="step-circle">✓</div>
+                        <div class="step-label">Ordered</div>
+                    </div>
+                    <div class="step {% if status == 'Preparing' or status == 'Out for Delivery' or status == 'Delivered' %}active{% endif %}">
+                        <div class="step-circle">🍳</div>
+                        <div class="step-label">Preparing</div>
+                    </div>
+                    <div class="step {% if status == 'Out for Delivery' or status == 'Delivered' %}active{% endif %}">
+                        <div class="step-circle">🛵</div>
+                        <div class="step-label">On the Way</div>
+                    </div>
+                    <div class="step {% if status == 'Delivered' %}active{% endif %}">
+                        <div class="step-circle">🎁</div>
+                        <div class="step-label">Delivered</div>
+                    </div>
+                    {% endwith %}
+                </div>
 
-    {% if cart_items %}
-        <a href="{% url 'customer_menu' cart_items.0.restaurant.id username %}">Back to Restaurants</a>
-    {% else %}
-        <a href="/">Back to Home</a>
-    {% endif %}
+                <div class="delivery-details">
+                    <div class="detail-item">
+                        <h4>Delivery Address</h4>
+                        <p>{{ order.address }}</p>
+                        <p style="color: #ff4757; font-weight: 700; margin-top: 5px;">📍 Pincode: {{ order.pincode }}</p>
+                        <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #888;">📞 {{ order.phone }}</p>
+                    </div>
+                    <div class="detail-item">
+                        <h4>ETA & Live Location</h4>
+                        <div style="background: rgba(46, 204, 113, 0.1); border: 1px solid #2ecc71; padding: 0.8rem; border-radius: 12px; margin-bottom: 1rem;">
+                            <span style="font-size: 1.2rem;">🕒</span> Arriving in <b>{{ order.estimated_time }} mins</b>
+                        </div>
+                        <div class="live-map-sim">
+                            <div class="map-bg" style="height: 100px; background: url('https://media.wired.com/photos/59269770af951b149b5b2907/master/pass/Google-Maps-Redesign.jpg'); background-size: cover; border-radius: 10px; position: relative; overflow: hidden;">
+                                <div class="partner-dot" style="position: absolute; top: 40%; left: 10%; width: 12px; height: 12px; background: #ff4757; border-radius: 50%; box-shadow: 0 0 10px #ff4757; animation: movePartner 20s infinite linear;"></div>
+                                <div class="home-dot" style="position: absolute; top: 60%; right: 20%; width: 12px; height: 12px; background: #2ecc71; border-radius: 50%; box-shadow: 0 0 10px #2ecc71;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <style>
+                    @keyframes movePartner {
+                        0% { top: 40%; left: 10%; }
+                        25% { top: 30%; left: 30%; }
+                        50% { top: 50%; left: 50%; }
+                        75% { top: 45%; left: 70%; }
+                        100% { top: 40%; left: 10%; }
+                    }
+                </style>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <span style="font-size: 5rem;">🍔</span>
+                <h2>You haven't placed any orders yet!</h2>
+                <a href="{% url 'customer_home' username %}" class="btn">Explore Restaurants</a>
+            </div>
+        {% endif %}
+    </div>
+
 </body>
 </html>

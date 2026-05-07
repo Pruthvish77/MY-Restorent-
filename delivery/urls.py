@@ -1,11 +1,13 @@
 from django.urls import path
 from . import views
 urlpatterns = [
-    path('', views.index),
+    path('', views.index, name='index'),
     path('open_signin', views.open_signin, name='open_signin'),
     path('open_signup', views.open_signup, name='open_signup'),
     path('signup', views.signup, name='signup'),
     path('signin', views.signin, name='signin'),
+    path('admin_home', views.admin_home, name='admin_home'),
+    path('customer_home/<str:username>', views.customer_home, name='customer_home'),
     path('open_add_restaurant', views.open_add_restaurant, name='open_add_restaurant'), 
     path('add_restaurant', views.add_restaurant, name='add_restaurant'),
     path('open_show_restaurant', views.open_show_restaurant, name='open_show_restaurant'), 
@@ -23,6 +25,14 @@ urlpatterns = [
     path('checkout/<str:username>/', views.checkout, name='checkout'),
 
     path('orders/<str:username>/', views.orders, name='orders'),
+    
+    # New Onboarding Endpoints
+    path('restaurant_apply/', views.restaurant_apply, name='restaurant_apply'),
+    path('pending_restaurants/', views.pending_restaurants, name='pending_restaurants'),
+    path('accept_restaurant/<int:restaurant_id>/', views.accept_restaurant, name='accept_restaurant'),
+    path('reject_restaurant/<int:restaurant_id>/', views.reject_restaurant, name='reject_restaurant'),
+    path('profile/<str:username>/', views.profile, name='profile'),
+    path('show_users/', views.show_users, name='show_users'),
 ]
 
 

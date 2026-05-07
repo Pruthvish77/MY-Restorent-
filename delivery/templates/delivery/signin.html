@@ -1,23 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign IN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, rgba(15, 16, 21, 0.7) 0%, rgba(30, 32, 42, 0.7) 100%),
+                        url('https://dynamic-media-cdn.tripadvisor.com/media/photo-o/21/71/29/cc/caption.jpg?w=900&h=500&s=1');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: white;
+        }
+
+        .glass-card {
+            background: rgba(25, 27, 35, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        h3 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            font-weight: 800;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #dcdde1;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-family: inherit;
+            margin-bottom: 1.5rem;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #ff4757;
+            background: rgba(255,255,255,0.15);
+        }
+
+        button {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 1rem;
+            width: 100%;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            background: #ff6b81;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 71, 87, 0.4);
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px);
+        }
+
+        /* Exit Animation Overlay */
+        #exit-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: black;
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #restaurant-view {
+            width: 100%;
+            height: 100%;
+            background: url('https://dynamic-media-cdn.tripadvisor.com/media/photo-o/21/71/29/cc/caption.jpg?w=900&h=500&s=1');
+            background-size: cover;
+            background-position: center;
+            transform: scale(1.4);
+            transition: transform 0.5s ease-in-out;
+            filter: brightness(1.2);
+        }
+
+        .show-exit #restaurant-view {
+            transform: scale(1);
+            filter: brightness(0.6);
+        }
+    </style>
 </head>
 <body>
-    <h3>SIGN IN below:</h3>
+    <a href="#" class="back-btn" onclick="goBack(event)">
+        <span>←</span> Back
+    </a>
 
-    <form action="{% url 'signin' %}" method="post">
-        {% csrf_token %}
-        <label>Username </label>
-        <input type="text" name="username">
-        <br><br>
-        <label>Password </label>
-        <input type="password" name="password">
-        <br><br>
-        
-        <br><br>
-        <button type="submit">SIGN IN</button>
-    </form>
+    <div class="glass-card">
+        <h3>SIGN IN</h3>
+
+        <form action="{% url 'signin' %}" method="post">
+            {% csrf_token %}
+            <label>Username</label>
+            <input type="text" name="username" required autocomplete="off">
+            
+            <label>Password</label>
+            <input type="password" name="password" required autocomplete="off">
+            
+            <button type="submit">SIGN IN</button>
+        </form>
+    </div>
+
+    <!-- Exit Overlay -->
+    <div id="exit-overlay">
+        <div id="restaurant-view"></div>
+    </div>
+
+    <script>
+        function goBack(event) {
+            event.preventDefault();
+            const overlay = document.getElementById('exit-overlay');
+            overlay.style.display = 'flex';
+            
+            // Trigger animation
+            setTimeout(() => {
+                overlay.classList.add('show-exit');
+            }, 10);
+
+            // Navigate after 0.5 second
+            setTimeout(() => {
+                window.location.href = "{% url 'index' %}";
+            }, 500);
+        }
+    </script>
 </body>
 </html>

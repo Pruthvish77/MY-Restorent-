@@ -3,46 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Manage Restaurants</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem 5%;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #2d3436;
+            font-weight: 900;
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-btn {
+            background: #2d3436;
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 100px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .back-btn:hover {
+            transform: scale(1.05);
+            background: #000;
+        }
+
+        .container {
+            padding: 4rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 3rem;
+        }
+
+        /* Leaf Shaped Admin Card */
+        .admin-card {
+            background: white;
+            border-radius: 60px 15px 60px 15px; /* Non-square shape */
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .admin-card:hover {
+            transform: translateY(-15px) rotate(1deg);
+            box-shadow: 0 30px 60px rgba(108, 92, 231, 0.2);
+        }
+
+        .card-img-container {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+        }
+
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .admin-card:hover .card-img {
+            transform: scale(1.1);
+        }
+
+        .card-body {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin: 0 0 1rem 0;
+            color: #2d3436;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .badge {
+            background: #f1f2f6;
+            color: #2f3542;
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Operations Buttons */
+        .ops-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: auto;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-update {
+            background: linear-gradient(45deg, #0984e3, #74b9ff);
+            color: white;
+            box-shadow: 0 10px 20px rgba(9, 132, 227, 0.2);
+        }
+        .btn-update:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(9, 132, 227, 0.4); }
+
+        .btn-menu {
+            background: linear-gradient(45deg, #00b894, #55efc4);
+            color: white;
+            box-shadow: 0 10px 20px rgba(0, 184, 148, 0.2);
+        }
+        .btn-menu:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(0, 184, 148, 0.4); }
+
+        .btn-delete {
+            grid-column: span 2;
+            background: #ffeaa7;
+            color: #d63031;
+            margin-top: 0.5rem;
+            font-weight: 900;
+        }
+        .btn-delete:hover { background: #ff7675; color: white; }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 6rem;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+        }
+
+    </style>
 </head>
 <body>
-    
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Restaurant name</th>
-                <th>Picture</th>
-                <th>Cuisine</th>
-                <th>Rating</th>
-                <th>Operations</th>
-            </tr>
-        </thead>
-        <tbody>
-            {%  for r in restaurantList %}
-                <tr>
-                    <td>{{ r.name }}</td>
-                    <td>
-                        <img src="{{ r.picture }}">
-                    </td>
-                    <td>{{ r.cuisine }}</td>
-                    <td>{{ r.rating }}</td>
-                    <td>
-                        <a href="{% url 'open_update_restaurant' r.id %}">
-                            Update Restaurant Info
-                        </a>
-                        <br>
-                        <a href="{% url 'delete_restaurant' r.id %}">
-                            Delete Restaurant
-                        </a>
-                        <br>
-                        <a href="{% url 'open_update_menu' r.id %}">
-                            Update Menu
-                        </a>
-                    </td>
-                </tr>
+
+    <header class="header">
+        <h1>🛠️ Manage Restaurants</h1>
+        <a href="{% url 'admin_home' %}" class="back-btn">← Dashboard</a>
+    </header>
+
+    <div class="container">
+        {% if restaurantList %}
+            {% for r in restaurantList %}
+            <div class="admin-card">
+                <div class="card-img-container">
+                    <img src="{{ r.picture }}" class="card-img" alt="{{ r.name }}" onerror="this.src='https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=600&q=80'">
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">{{ r.name }}</h3>
+                    <div class="card-meta">
+                        <span class="badge">🍽️ {{ r.cuisine }}</span>
+                        <span class="badge">⭐ {{ r.rating }}</span>
+                    </div>
+
+                    <div class="ops-grid">
+                        <a href="{% url 'open_update_restaurant' r.id %}" class="btn btn-update">✏️ Edit Info</a>
+                        <a href="{% url 'open_update_menu' r.id %}" class="btn btn-menu">🍔 Edit Menu</a>
+                        <a href="{% url 'delete_restaurant' r.id %}" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete {{ r.name }}? This cannot be undone.')">🗑️ Delete Restaurant</a>
+                    </div>
+                </div>
+            </div>
             {% endfor %}
-        </tbody>
-    </table>
-    
+        {% else %}
+            <div class="empty-state">
+                <p>No restaurants found. Please add a restaurant first!</p>
+            </div>
+        {% endif %}
+    </div>
+
 </body>
 </html>
