@@ -195,26 +195,46 @@ def update_menu(request, restaurant_id):
     restaurant = Restaurant.objects.get(id = restaurant_id)
     
     if request.method == 'POST':
+        item_id = request.POST.get('item_id')
         name = request.POST.get('name')
         description = request.POST.get('description')
         price = request.POST.get('price')
         vegeterian = request.POST.get('vegeterian') == 'on'
         picture = request.POST.get('picture')
+        category = request.POST.get('category', 'General')
         
-        try:
-            Item.objects.get(name = name, restaurant = restaurant)
-            return HttpResponse("Duplicate item in this restaurant!")
-        except:
-            Item.objects.create(
-                restaurant = restaurant,
-                name = name,
-                description = description,
-                price = price,
-                vegeterian = vegeterian,
-                picture = picture,
-                category = request.POST.get('category', 'General')
-            )
-    return redirect('admin_home')
+        if item_id:
+            # Update existing item
+            item = Item.objects.get(id=item_id)
+            item.name = name
+            item.description = description
+            item.price = price
+            item.vegeterian = vegeterian
+            item.picture = picture
+            item.category = category
+            item.save()
+        else:
+            # Create new item
+            try:
+                Item.objects.get(name = name, restaurant = restaurant)
+                return HttpResponse("Duplicate item in this restaurant!")
+            except:
+                Item.objects.create(
+                    restaurant = restaurant,
+                    name = name,
+                    description = description,
+                    price = price,
+                    vegeterian = vegeterian,
+                    picture = picture,
+                    category = category
+                )
+    return redirect('open_update_menu', restaurant_id=restaurant_id)
+
+def delete_item(request, item_id):
+    item = get_object_or_404(Item, id=item_id)
+    restaurant_id = item.restaurant.id
+    item.delete()
+    return redirect('open_update_menu', restaurant_id=restaurant_id)
 
 def view_menu(request, restaurant_id, username):
     restaurant = Restaurant.objects.get(id = restaurant_id)
