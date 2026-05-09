@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: my-restaurant
+    env: python
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
+    startCommand: "gunicorn meal_buddy.wsgi:application"
+    envVars:
+      - key: DEBUG
+        value: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: RAZORPAY_KEY_ID
+        value: rzp_test_SmTSKvVKJ3oWgS
+      - key: RAZORPAY_KEY_SECRET
+        value: yjvXynhq01GFVZdYFYjzvocd
